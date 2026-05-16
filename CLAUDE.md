@@ -23,6 +23,64 @@ Never merge a PR if any CI check or Vercel deployment check is still pending or 
 
 ---
 
+## Auto-Labeling Rules
+
+Apply labels automatically whenever a PR or issue is opened. Do not wait to be asked.
+
+### On every new PR — apply labels immediately:
+
+#### Difficulty (required — pick exactly one):
+
+| Label | When to apply |
+|---|---|
+| `level:beginner` | Small/simple changes: typo fixes, minor copy edits, single-line tweaks, docs-only changes, adding a missing `aria-label` |
+| `level:intermediate` | Moderate changes: new UI components, multi-file features, hooks, non-trivial bug fixes |
+| `level:advanced` | Complex features: significant refactors, new lib integrations, multi-component architecture changes, FFmpeg filter changes |
+| `level:critical` | Security fixes, critical bug patches, breaking changes that affect the entire app |
+
+Use the **diff size and conceptual complexity** together — a 200-line diff that only reformats code is still `level:beginner`; a 20-line diff that changes FFmpeg filter logic is `level:advanced`.
+
+#### Quality (optional — apply if clearly warranted):
+
+| Label | When to apply |
+|---|---|
+| `quality:clean` | Code is well-structured, readable, consistent with project style, and has no obvious issues |
+| `quality:exceptional` | Outstanding quality: handles edge cases elegantly, adds meaningful tests, exemplary naming and structure |
+
+Apply `quality:clean` only when the code is genuinely clean — not as a default. Apply `quality:exceptional` sparingly.
+
+#### Type (optional — apply one or more that fit):
+
+| Label | When to apply |
+|---|---|
+| `type:bug` | Fixes a bug or error in existing behavior |
+| `type:feature` | Adds new user-facing functionality |
+| `type:docs` | Documentation-only changes (README, CONTRIBUTING, code comments) |
+| `type:testing` | Adds or improves tests |
+| `type:security` | Security-related changes (CSP, SRI, input validation, auth) |
+| `type:performance` | Improves speed, reduces bundle size, optimizes rendering |
+| `type:design` | UI/UX changes (layout, styling, animations, visual improvements) |
+| `type:refactor` | Code restructuring with no behavior change |
+| `type:devops` | CI/CD, GitHub Actions workflows, config files, build tooling |
+| `type:accessibility` | Accessibility improvements (ARIA, keyboard nav, contrast, screen reader support) |
+
+Multiple type labels are fine when a PR genuinely covers multiple concerns (e.g., a bug fix that also improves accessibility gets both `type:bug` and `type:accessibility`).
+
+#### GSSoC labels:
+
+- Always add `gssoc'26` to every PR.
+- **Do NOT add `gssoc:approved` automatically.** Only a human maintainer adds this label after reviewing the contribution. Without it, the contribution does not count for GSSoC points.
+
+---
+
+### On every new issue — apply labels immediately:
+
+Apply the same type labels (`type:bug`, `type:feature`, `type:docs`, etc.) based on what the issue is about.
+Apply one difficulty label (`level:*`) based on the estimated complexity of solving it.
+Do **not** add `gssoc:approved` to issues — it only applies to PRs.
+
+---
+
 ## Issue Triage & Assignment
 
 When a new issue is opened:
@@ -32,9 +90,7 @@ When a new issue is opened:
    - Acknowledges the issue
    - Asks clarifying questions if the issue is vague or missing reproduction steps
    - Explains what happens next (e.g., "a maintainer will review this soon")
-3. Apply the most appropriate label from the GSSoC schema:
-   - **Difficulty** (required): `level:beginner` | `level:intermediate` | `level:advanced` | `level:critical`
-   - **Type** (stackable): `type:bug` | `type:feature` | `type:docs` | `type:testing` | `type:security` | `type:performance` | `type:design` | `type:refactor` | `type:devops` | `type:accessibility`
+3. Apply labels as described in the Auto-Labeling Rules above.
 4. Scan all existing comments. If any commenter said something like "I'd like to work on this", "can I be assigned?", or "I want to take this" — assign the issue to the **first** person who made such a request. Only assign one person.
 
 ---
@@ -78,10 +134,10 @@ Reframe is a **static Next.js 15 SPA** (`output: "export"`) — no server runtim
 ## GSSoC Label Schema
 
 Every PR must have:
-- One `level:*` label (difficulty)
-- One or more `type:*` labels (category)
-- `gssoc'26` label
-- `gssoc:approved` label (required for contribution to count for points)
+- One `level:*` label (difficulty) — applied automatically on open
+- One or more `type:*` labels (category) — applied automatically on open
+- `gssoc'26` label — applied automatically on open
+- `gssoc:approved` label — **added by a maintainer only**, never automatically
 
 **Quality multipliers** (optional, applied by maintainer):
 - `quality:clean` — well-implemented, clean code
