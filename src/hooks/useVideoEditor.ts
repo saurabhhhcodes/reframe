@@ -70,11 +70,13 @@ function validateRecipe(recipe: EditRecipe, duration: number ): string | null {
       "Trim start time cannot be less than 0 seconds.",
     ],
     [
-      recipe.trimEnd !== null && recipe.trimEnd > duration,
+      recipe.trimEnd !== null && duration > 0 && recipe.trimEnd > duration,
       `Trim end time cannot exceed the video duration (${Math.floor(duration)}s).`,
     ],
     [
-      recipe.trimStart >= (recipe.trimEnd ?? duration),
+      recipe.trimEnd !== null 
+        ? recipe.trimStart >= recipe.trimEnd 
+        : (duration > 0 && recipe.trimStart >= duration),
       "Trim start time must be earlier than the end time.",
     ],
     [
@@ -147,7 +149,7 @@ export function useVideoEditor() {
   const [overlayPosition, setOverlayPosition] = useState<OverlayPosition>("bottom-right");
   const [overlaySize, setOverlaySize] = useState(150);
   const [overlayOpacity, setOverlayOpacity] = useState(100);
-
+  const [currentTime, setCurrentTime] = useState(0);
  const updateRecipe = useCallback((patch: Partial<EditRecipe>) => {
   setRecipe((prev) => {
     const next = { ...prev, ...patch };
@@ -597,6 +599,13 @@ export function useVideoEditor() {
       videoRef.current.currentTime = time;
     }
   }, []);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const handleTimeUpdate = () => setCurrentTime(video.currentTime);
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    return () => video.removeEventListener("timeupdate", handleTimeUpdate);
+  });
 
   const toggleSound = useCallback(() => {
   updateRecipe({ soundOnCompletion: !recipe.soundOnCompletion });
@@ -636,6 +645,7 @@ export function useVideoEditor() {
     overlayOpacity,
     setOverlayOpacity,
     recommendedPreset,
+    currentTime,
     toggleSound,
   };
 }

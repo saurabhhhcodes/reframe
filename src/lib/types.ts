@@ -14,6 +14,7 @@ export interface EditRecipe {
   quality: number;
   format: "mp4" | "webm" | "mkv" | "gif";
   stabilization: boolean;
+  denoise: boolean;
   brightness: number;
   contrast: number;
   saturation: number;
