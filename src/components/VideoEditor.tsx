@@ -661,7 +661,7 @@ export default function VideoEditor() {
                 </div>
               </AccordionSection>
 
-              <div className="pt-2 flex justify-between items-center">
+              <div className="pt-2 flex justify-center items-center gap-6">
                 <button
                   type="button"
                   onClick={handleCopyLink}
