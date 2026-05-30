@@ -20,6 +20,8 @@ export interface EditRecipe {
   customWidth: number;
   customHeight: number;
   framing: "fit" | "fill";
+  framePositionX: number;
+  framePositionY: number;
   trimStart: number;
   trimEnd: number | null;
   rotate: 0 | 90 | 180 | 270;
@@ -90,6 +92,10 @@ export function isValidRecipe(value: unknown): value is EditRecipe {
   if (typeof v.customWidth !== "number" || !isFinite(v.customWidth)) return false;
   if (typeof v.customHeight !== "number" || !isFinite(v.customHeight)) return false;
   if (v.framing !== "fit" && v.framing !== "fill") return false;
+  if (typeof v.framePositionX !== "number" || !isFinite(v.framePositionX)) return false;
+  if (typeof v.framePositionY !== "number" || !isFinite(v.framePositionY)) return false;
+  if (v.framePositionX < 0 || v.framePositionX > 100) return false;
+  if (v.framePositionY < 0 || v.framePositionY > 100) return false;
   if (typeof v.trimStart !== "number" || !isFinite(v.trimStart)) return false;
   if (!(v.trimEnd === null || (typeof v.trimEnd === "number" && isFinite(v.trimEnd)))) return false;
   if (![0, 90, 180, 270].includes(v.rotate)) return false;

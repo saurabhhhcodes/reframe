@@ -208,6 +208,9 @@ export function useVideoEditor() {
         return typeof val === "number" && !isNaN(val) && val >= 16 && val <= 7680;
       case "framing":
         return val === "fit" || val === "fill";
+      case "framePositionX":
+      case "framePositionY":
+        return typeof val === "number" && !isNaN(val) && val >= 0 && val <= 100;
       case "trimStart":
         return typeof val === "number" && !isNaN(val) && val >= 0;
       case "trimEnd":

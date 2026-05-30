@@ -61,7 +61,17 @@ describe("buildVideoFilter", () => {
   it("should use fill framing with scale and crop", () => {
     const result = buildVideoFilter(base({ framing: "fill" }), 1280, 720);
     expect(result).toContain("force_original_aspect_ratio=increase");
-    expect(result).toContain("crop=1280:720");
+    expect(result).toContain("crop=1280:720:(iw-ow)*0.5000:(ih-oh)*0.5000");
+  });
+
+  it("should pass crop position to fill framing", () => {
+    const result = buildVideoFilter(
+      base({ framing: "fill", framePositionX: 25, framePositionY: 75 }),
+      1280,
+      720
+    );
+
+    expect(result).toContain("crop=1280:720:(iw-ow)*0.2500:(ih-oh)*0.7500");
   });
 
   it("should include deshake when stabilization is true", () => {

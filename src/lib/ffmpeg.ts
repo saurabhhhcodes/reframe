@@ -351,9 +351,11 @@ export function buildVideoFilter(recipe: EditRecipe, targetW: number, targetH: n
       `pad=${targetW}:${targetH}:(ow-iw)/2:(oh-ih)/2:color=black`
     );
   } else {
+    const cropX = ((recipe.framePositionX ?? 50) / 100).toFixed(4);
+    const cropY = ((recipe.framePositionY ?? 50) / 100).toFixed(4);
     filters.push(
       `scale=${targetW}:${targetH}:force_original_aspect_ratio=increase`,
-      `crop=${targetW}:${targetH}`
+      `crop=${targetW}:${targetH}:(iw-ow)*${cropX}:(ih-oh)*${cropY}`
     );
   }
 
