@@ -68,6 +68,13 @@ export interface ExportResult {
   exportDurationMs?: number;
 }
 
+export interface ExportHistoryItem {
+  id: string;
+  result: ExportResult;
+  filename: string;
+  createdAt: number;
+}
+
 export type ExportStatus =
   | "idle"
   | "loading-engine"

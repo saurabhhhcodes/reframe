@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
-import { EditRecipe, ExportResult, ExportStatus, MAX_FILE_SIZE, OverlayPosition, isValidRecipe } from "@/lib/types";
+import { EditRecipe, ExportHistoryItem, ExportResult, ExportStatus, MAX_FILE_SIZE, OverlayPosition, isValidRecipe } from "@/lib/types";
 import { DEFAULT_RECIPE, SPEED_STEPS } from "@/lib/constants";
 import { getPresetById } from "@/lib/presets";
 import { loadFFmpeg, exportVideo, terminateFFmpeg, FFmpegLoadError } from "@/lib/ffmpeg";
@@ -9,7 +9,12 @@ import { suggestPreset } from "@/lib/presetSuggestion";
 import { validateDimensions, getDownscaledDimensions } from "@/utils/video-validation";
 
 const DEFAULT_TITLE = "Reframe — Resize, trim, and export videos in your browser";
-  const STORAGE_KEY = "reframe:recipe";
+const STORAGE_KEY = "reframe:recipe";
+const MAX_EXPORT_HISTORY = 5;
+
+function getExportFilename(result: ExportResult): string {
+  return `reframe_${result.width}x${result.height}.${result.format}`;
+}
 
 export function extractMetadata(file: File): Promise<{ width: number; height: number; duration: number }> {
   return new Promise((resolve, reject) => {
@@ -171,11 +176,13 @@ export function useVideoEditor() {
   const [status, setStatus] = useState<ExportStatus>("idle");
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<ExportResult | null>(null);
+  const [exportHistory, setExportHistory] = useState<ExportHistoryItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [fileError, setFileError] = useState("");
   const [exportStartedAt, setExportStartedAt] = useState<number | null>(null);
   const exportAbortControllerRef = useRef<AbortController | null>(null);
   const exportCancelledRef = useRef(false);
+  const exportHistoryRef = useRef<ExportHistoryItem[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [musicFile, setMusicFile] = useState<File | null>(null);
@@ -498,9 +505,32 @@ export function useVideoEditor() {
       );
       if (exportCancelledRef.current) return;
 
-      setResult({
+      const completedResult = {
         ...exportResult,
         exportDurationMs: Date.now() - startedAt,
+      };
+
+      setResult(completedResult);
+      setExportHistory((previous) => {
+        const historyResult = {
+          ...completedResult,
+          blobUrl: URL.createObjectURL(completedResult.blob),
+        };
+        const next = [
+          {
+            id: `${Date.now()}-${completedResult.width}x${completedResult.height}-${completedResult.format}`,
+            result: historyResult,
+            filename: getExportFilename(completedResult),
+            createdAt: Date.now(),
+          },
+          ...previous,
+        ];
+
+        next.slice(MAX_EXPORT_HISTORY).forEach((item) => {
+          URL.revokeObjectURL(item.result.blobUrl);
+        });
+
+        return next.slice(0, MAX_EXPORT_HISTORY);
       });
       setStatus("done");
      }  catch (err) {
@@ -573,6 +603,10 @@ export function useVideoEditor() {
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [status]);
+
+  useEffect(() => {
+    exportHistoryRef.current = exportHistory;
+  }, [exportHistory]);
   
   useEffect(() => {
     const handleKeydown = (e: KeyboardEvent) => {
@@ -628,6 +662,9 @@ export function useVideoEditor() {
 
   useEffect(() => {
     return () => {
+      exportHistoryRef.current.forEach((item) => {
+        URL.revokeObjectURL(item.result.blobUrl);
+      });
       terminateFFmpeg();
     };
   }, []);
@@ -700,6 +737,7 @@ export function useVideoEditor() {
     progress,
     exportStartedAt,
     result,
+    exportHistory,
     error,
     videoRef,
     seekTo,

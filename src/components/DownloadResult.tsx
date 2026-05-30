@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ExportResult } from "@/lib/types";
+import { ExportHistoryItem, ExportResult } from "@/lib/types";
 import { formatBytes } from "@/lib/utils";
-import { Download, RotateCcw, Share2, AlertCircle, Volume2, VolumeX } from "lucide-react";
+import { Clock3, Download, RotateCcw, Share2, AlertCircle, Volume2, VolumeX } from "lucide-react";
 import LottiePlayer from "./LottiePlayer";
 import { NativeShareButton } from "./NativeShareButton";
 import successAnim from "@/lib/lottie/success.json";
@@ -24,12 +24,22 @@ function formatExportDuration(ms: number): string {
 
 interface Props {
   result: ExportResult;
+  exportHistory: ExportHistoryItem[];
   onReset: () => void;
   soundOnCompletion: boolean;
   onToggleSound: () => void;
 }
 
-export default function DownloadResult({ result, onReset, soundOnCompletion, onToggleSound }: Props) {
+function formatExportedAt(timestamp: number): string {
+  return new Date(timestamp).toLocaleString(undefined, {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+export default function DownloadResult({ result, exportHistory, onReset, soundOnCompletion, onToggleSound }: Props) {
   const defaultName = `reframe_${result.width}x${result.height}`;
   const [name, setName] = useState(defaultName);
 
@@ -186,6 +196,53 @@ export default function DownloadResult({ result, onReset, soundOnCompletion, onT
           Share on X
         </a>
       </div>
+
+      {exportHistory.length > 0 && (
+        <section
+          aria-labelledby="export-history-heading"
+          className="pt-2 border-t border-[var(--border)] space-y-2"
+        >
+          <div className="flex items-center gap-2 text-[var(--text)]">
+            <Clock3 size={14} aria-hidden="true" className="text-[var(--muted)]" />
+            <h2 id="export-history-heading" className="font-heading font-bold text-sm">
+              Recent exports
+            </h2>
+          </div>
+
+          <ul className="space-y-2">
+            {exportHistory.map((item) => (
+              <li
+                key={item.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg)] p-3"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-heading font-semibold text-[var(--text)]">
+                    {item.filename}
+                  </p>
+                  <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[var(--muted)]">
+                    <span>{formatBytes(item.result.size)}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{item.result.format.toUpperCase()}</span>
+                    <span aria-hidden="true">·</span>
+                    <time dateTime={new Date(item.createdAt).toISOString()}>
+                      {formatExportedAt(item.createdAt)}
+                    </time>
+                  </p>
+                </div>
+
+                <a
+                  href={item.result.blobUrl}
+                  download={item.filename}
+                  className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-heading font-bold uppercase tracking-wide text-[var(--text)] transition-colors hover:border-[var(--accent)] hover:bg-[var(--accent-muted)]"
+                >
+                  <Download size={13} aria-hidden="true" />
+                  Download
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

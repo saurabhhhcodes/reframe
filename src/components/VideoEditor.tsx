@@ -199,7 +199,7 @@ function KeyboardShortcutsPanel() {
 export default function VideoEditor() {
   const {
     file, duration, recipe, status, progress,
-    result, error, exportStartedAt, updateRecipe,
+    result, exportHistory, error, exportStartedAt, updateRecipe,
     handleFileSelect, fileError, handleExport, cancelExport, reset, resetSettings,
     videoRef,
     seekTo,
@@ -681,7 +681,13 @@ export default function VideoEditor() {
 
             {status === "done" && result && (
               <div role="status" className="animate-fade-in" ref={downloadRef}>
-                <DownloadResult result={result} onReset={reset} soundOnCompletion={recipe.soundOnCompletion} onToggleSound={toggleSound} />
+                <DownloadResult
+                  result={result}
+                  exportHistory={exportHistory}
+                  onReset={reset}
+                  soundOnCompletion={recipe.soundOnCompletion}
+                  onToggleSound={toggleSound}
+                />
               </div>
             )}
           </div>
