@@ -178,9 +178,14 @@ export default function TrimControl({ recipe, onChange, duration, file }: Props)
   return (
     <div id="trim-control" className="space-y-3">
       {duration > 0 && (
+        <>
+        <p id="trim-timeline-instructions" className="sr-only">
+          Use the start and end handles to adjust the trim range. Arrow keys move the focused handle by one tenth of a second.
+        </p>
         <div
           role="toolbar"
           aria-label="Trim timeline"
+          aria-describedby="trim-timeline-instructions"
           ref={trackRef}
           className="relative h-6 flex items-center cursor-pointer select-none"
           onClick={(e) => {
@@ -207,6 +212,7 @@ export default function TrimControl({ recipe, onChange, duration, file }: Props)
             aria-valuenow={recipe.trimStart}
             aria-valuemin={0}
             aria-valuemax={duration}
+            aria-valuetext={`${recipe.trimStart.toFixed(1)} seconds`}
             tabIndex={0}
             className="absolute w-4 h-4 rounded-full bg-white border-2 border-film-400 shadow cursor-grab active:cursor-grabbing -translate-x-1/2 focus:outline-none focus:ring-2 focus:ring-film-400"
             style={{ left: `${(recipe.trimStart / duration) * 100}%` }}
@@ -223,6 +229,7 @@ export default function TrimControl({ recipe, onChange, duration, file }: Props)
             aria-valuenow={recipe.trimEnd ?? duration}
             aria-valuemin={0}
             aria-valuemax={duration}
+            aria-valuetext={`${(recipe.trimEnd ?? duration).toFixed(1)} seconds`}
             tabIndex={0}
             className="absolute w-4 h-4 rounded-full bg-white border-2 border-film-400 shadow cursor-grab active:cursor-grabbing -translate-x-1/2 focus:outline-none focus:ring-2 focus:ring-film-400"
             style={{ left: `${((recipe.trimEnd ?? duration) / duration) * 100}%` }}
@@ -234,6 +241,7 @@ export default function TrimControl({ recipe, onChange, duration, file }: Props)
             }}
           />
         </div>
+        </>
       )}
       <div className="flex gap-3">
         <div className="flex-1">
@@ -326,5 +334,4 @@ export default function TrimControl({ recipe, onChange, duration, file }: Props)
     </div>
   );
 }
-
 

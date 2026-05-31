@@ -85,9 +85,10 @@ export default function TextControls({
       <button
         type="button"
         onClick={handleAddText}
+        aria-label="Add a new text overlay"
         className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] font-semibold text-sm hover:bg-[var(--border)] transition-colors"
       >
-        <Plus size={14} />
+        <Plus size={14} aria-hidden="true" />
         Add Text
       </button>
 
@@ -106,6 +107,8 @@ export default function TextControls({
               <button
                 type="button"
                 onClick={() => onSelectText(overlay.id)}
+                aria-label={`Select text overlay ${idx + 1}${overlay.text ? `: ${overlay.text}` : ""}`}
+                aria-pressed={selectedTextId === overlay.id}
                 className="flex-1 text-left text-xs truncate text-[var(--text)] font-medium"
               >
                 {overlay.text || "(empty)"}
@@ -116,7 +119,7 @@ export default function TextControls({
                 className="w-5 h-5 flex items-center justify-center rounded text-red-400 hover:bg-red-500/10 transition-colors"
                 aria-label={`Remove text overlay ${idx + 1}`}
               >
-                <Trash2 size={13} />
+                <Trash2 size={13} aria-hidden="true" />
               </button>
             </div>
           ))}
@@ -208,7 +211,7 @@ export default function TextControls({
           </div>
 
           {/* Font Weight */}
-          <div>
+          <fieldset>
             <legend className="text-xs text-[var(--muted)] font-medium mb-1 block">
               Weight
             </legend>
@@ -228,12 +231,14 @@ export default function TextControls({
                   style={{
                     fontWeight: weight === "normal" ? 400 : weight === "bold" ? 700 : 900,
                   }}
+                  aria-label={`Set text overlay weight to ${weight === "900" ? "heavy" : weight}`}
+                  aria-pressed={selectedOverlay.fontWeight === weight}
                 >
                   {weight === "900" ? "Heavy" : weight.charAt(0).toUpperCase() + weight.slice(1)}
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
         </div>
       )}
     </div>

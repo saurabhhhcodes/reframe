@@ -131,9 +131,9 @@ export default function FileUpload({
       <div className="flex flex-col lg:flex-row lg:items-center gap-3">
         <div className="flex items-start gap-3 flex-1 min-w-0">
           <div className="hidden lg:flex items-center justify-center w-9 h-9 rounded-lg bg-[var(--surface)] border border-[var(--border)] shrink-0">
-            <Film size={16} className="text-film-600" />
+            <Film size={16} className="text-film-600" aria-hidden="true" />
           </div>
-          <Film size={18} className="lg:hidden text-film-600 shrink-0 mt-0.5" />
+          <Film size={18} className="lg:hidden text-film-600 shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-0.5">
               <p className="text-sm font-semibold text-[var(--text)] truncate max-w-[320px] xl:max-w-[420px]">
@@ -181,6 +181,7 @@ export default function FileUpload({
         type="file"
         accept="video/*"
         className="hidden"
+        aria-label="Change selected video file"
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) handleFile(f);
@@ -235,7 +236,7 @@ export default function FileUpload({
       </div>
 
       <div className="flex items-center gap-2 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm font-heading font-medium text-[var(--muted)]">
-        <FolderOpen size={14} />
+        <FolderOpen size={14} aria-hidden="true" />
         MP4 / MOV / AVI / WebM
       </div>
 
@@ -252,6 +253,7 @@ export default function FileUpload({
         type="file"
         accept="video/*"
         className="hidden"
+        aria-label="Upload video file"
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) handleFile(f);
@@ -278,7 +280,7 @@ export default function FileUpload({
           <div className="relative flex items-center justify-center">
             <div className="absolute w-32 h-32 rounded-full border-4 border-film-500/40 animate-ping" />
             <div className="w-24 h-24 rounded-full bg-film-500/10 border-2 border-film-500 flex items-center justify-center">
-              <Film size={40} className="text-film-400" />
+              <Film size={40} className="text-film-400" aria-hidden="true" />
             </div>
           </div>
 

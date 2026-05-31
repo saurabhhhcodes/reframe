@@ -15,10 +15,10 @@ interface ImageOverlayPanelProps {
 }
 
 const POSITIONS: { value: OverlayPosition; icon: React.ReactNode; label: string }[] = [
-  { value: "top-left",     icon: <ArrowUpLeft size={11} />,  label: "TL" },
-  { value: "top-right",    icon: <ArrowUpRight size={11} />, label: "TR" },
-  { value: "bottom-left",  icon: <ArrowDownLeft size={11} />, label: "BL" },
-  { value: "bottom-right", icon: <ArrowDownRight size={11} />, label: "BR" },
+  { value: "top-left",     icon: <ArrowUpLeft size={11} aria-hidden="true" />,  label: "TL" },
+  { value: "top-right",    icon: <ArrowUpRight size={11} aria-hidden="true" />, label: "TR" },
+  { value: "bottom-left",  icon: <ArrowDownLeft size={11} aria-hidden="true" />, label: "BL" },
+  { value: "bottom-right", icon: <ArrowDownRight size={11} aria-hidden="true" />, label: "BR" },
 ];
 
 export default function ImageOverlayPanel({
@@ -81,7 +81,7 @@ export default function ImageOverlayPanel({
             />
           ) : (
             <>
-              <Upload size={14} className="opacity-80" />
+              <Upload size={14} className="opacity-80" aria-hidden="true" />
               <span className="text-[9px] mt-0.5 font-medium tracking-wide">Upload</span>
             </>
           )}
@@ -103,7 +103,7 @@ export default function ImageOverlayPanel({
             <>
               {/* File Info block */}
               <div className="flex items-center gap-2 min-w-0 flex-1">
-                <FileImage size={14} className="text-[var(--muted)] shrink-0" />
+                <FileImage size={14} className="text-[var(--muted)] shrink-0" aria-hidden="true" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] font-medium text-[var(--text)] truncate">
                     {overlayFile.name}
@@ -136,13 +136,15 @@ export default function ImageOverlayPanel({
         <div className="space-y-1.5 pt-1 animate-fade-in">
           {/* Position Selector Row */}
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[var(--muted)] w-8">Pos:</span>
+            <span className="text-[var(--muted)] w-8" aria-hidden="true">Pos:</span>
             <div className="grid grid-cols-4 gap-1 flex-1">
               {POSITIONS.map(({ value, icon, label }) => (
                 <button
                   key={value}
                   type="button"
                   onClick={() => setOverlayPosition(value)}
+                  aria-label={`Place overlay at ${value.replace("-", " ")}`}
+                  aria-pressed={overlayPosition === value}
                   className={`rounded border py-0.5 text-center text-[10px] transition flex items-center justify-center gap-0.5 ${
                     overlayPosition === value
                       ? "border-[var(--accent)] text-[var(--text)] bg-[var(--accent-muted)]"
@@ -160,11 +162,13 @@ export default function ImageOverlayPanel({
 
           {/* Size Preset Row */}
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[var(--muted)] w-8">Size:</span>
+            <span className="text-[var(--muted)] w-8" aria-hidden="true">Size:</span>
             <div className="grid grid-cols-3 gap-1 flex-1">
               <button
                 type="button"
                 onClick={() => setOverlaySize(100)}
+                aria-label="Set overlay size to small"
+                aria-pressed={isSmallSize}
                 className={`rounded border py-0.5 text-center text-[10px] transition ${
                   isSmallSize
                     ? "border-[var(--accent)] text-[var(--text)] bg-[var(--accent-muted)]"
@@ -176,6 +180,8 @@ export default function ImageOverlayPanel({
               <button
                 type="button"
                 onClick={() => setOverlaySize(250)}
+                aria-label="Set overlay size to medium"
+                aria-pressed={isMediumSize}
                 className={`rounded border py-0.5 text-center text-[10px] transition ${
                   isMediumSize
                     ? "border-[var(--accent)] text-[var(--text)] bg-[var(--accent-muted)]"
@@ -187,6 +193,8 @@ export default function ImageOverlayPanel({
               <button
                 type="button"
                 onClick={() => setOverlaySize(450)}
+                aria-label="Set overlay size to large"
+                aria-pressed={isLargeSize}
                 className={`rounded border py-0.5 text-center text-[10px] transition ${
                   isLargeSize
                     ? "border-[var(--accent)] text-[var(--text)] bg-[var(--accent-muted)]"
@@ -200,11 +208,13 @@ export default function ImageOverlayPanel({
 
           {/* Opacity Preset Row */}
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[var(--muted)] w-8">Opa:</span>
+            <span className="text-[var(--muted)] w-8" aria-hidden="true">Opa:</span>
             <div className="grid grid-cols-3 gap-1 flex-1">
               <button
                 type="button"
                 onClick={() => setOverlayOpacity(25)}
+                aria-label="Set overlay opacity to 25 percent"
+                aria-pressed={isFaintOpacity}
                 className={`rounded border py-0.5 text-center text-[10px] transition ${
                   isFaintOpacity
                     ? "border-[var(--accent)] text-[var(--text)] bg-[var(--accent-muted)]"
@@ -216,6 +226,8 @@ export default function ImageOverlayPanel({
               <button
                 type="button"
                 onClick={() => setOverlayOpacity(60)}
+                aria-label="Set overlay opacity to 60 percent"
+                aria-pressed={isMediumOpacity}
                 className={`rounded border py-0.5 text-center text-[10px] transition ${
                   isMediumOpacity
                     ? "border-[var(--accent)] text-[var(--text)] bg-[var(--accent-muted)]"
@@ -227,6 +239,8 @@ export default function ImageOverlayPanel({
               <button
                 type="button"
                 onClick={() => setOverlayOpacity(100)}
+                aria-label="Set overlay opacity to 100 percent"
+                aria-pressed={isSolidOpacity}
                 className={`rounded border py-0.5 text-center text-[10px] transition ${
                   isSolidOpacity
                     ? "border-[var(--accent)] text-[var(--text)] bg-[var(--accent-muted)]"
