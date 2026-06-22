@@ -63,6 +63,9 @@ function getTooltipStyle(
   const tw = tooltip?.offsetWidth ?? 320;
   const th = tooltip?.offsetHeight ?? 140;
 
+  const vw = typeof window !== "undefined" ? window.innerWidth : 0;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 0;
+
   const sr = {
     top: rect.top - PADDING,
     left: rect.left - PADDING,
@@ -70,29 +73,34 @@ function getTooltipStyle(
     height: rect.height + PADDING * 2,
   };
 
+  let top = 0;
+  let left = 0;
+
   switch (position) {
     case "top":
-      return {
-        top: sr.top - th - TOOLTIP_OFFSET,
-        left: sr.left + sr.width / 2 - tw / 2,
-      };
+      top = sr.top - th - TOOLTIP_OFFSET;
+      left = sr.left + sr.width / 2 - tw / 2;
+      break;
     case "left":
-      return {
-        top: sr.top + sr.height / 2 - th / 2,
-        left: sr.left - tw - TOOLTIP_OFFSET,
-      };
+      top = sr.top + sr.height / 2 - th / 2;
+      left = sr.left - tw - TOOLTIP_OFFSET;
+      break;
     case "right":
-      return {
-        top: sr.top + sr.height / 2 - th / 2,
-        left: sr.left + sr.width + TOOLTIP_OFFSET,
-      };
+      top = sr.top + sr.height / 2 - th / 2;
+      left = sr.left + sr.width + TOOLTIP_OFFSET;
+      break;
     case "bottom":
     default:
-      return {
-        top: sr.top + sr.height + TOOLTIP_OFFSET,
-        left: sr.left + sr.width / 2 - tw / 2,
-      };
+      top = sr.top + sr.height + TOOLTIP_OFFSET;
+      left = sr.left + sr.width / 2 - tw / 2;
+      break;
   }
+
+  // Clamp within viewport so tooltip never overflows
+  top = Math.max(TOOLTIP_OFFSET, Math.min(top, vh - th - TOOLTIP_OFFSET));
+  left = Math.max(TOOLTIP_OFFSET, Math.min(left, vw - tw - TOOLTIP_OFFSET));
+
+  return { top, left };
 }
 
 interface SpotlightProps {
